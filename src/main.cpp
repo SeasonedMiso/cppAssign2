@@ -1,4 +1,4 @@
-#include "ass2.hpp"
+#include "FrameSequence.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -71,7 +71,6 @@ int main(int argc, char *argv[])
             {
                 badArg();
             }
-
             if (parseIntArgs(4, i, argv, tResultArr))
             {
                 i += 4;
@@ -88,7 +87,6 @@ int main(int argc, char *argv[])
             {
                 badArg();
             }
-
             if (parseIntArgs(2, i, argv, sResultArr))
             {
                 i += 2;
@@ -108,16 +106,14 @@ int main(int argc, char *argv[])
             for (int j = 0; j < 2; j++)
             {
                 wResultVecArray[wCounter][j] = argv[i + j + 1];
-                cout << wResultVecArray[wCounter][j] << "\n";
+                // cout << wResultVecArray[wCounter][j] << "\n";
             }
             wCounter++;
         }
-        ass2(tResultArr, sResultArr, wResultVecArray);
     }
+    
+        FrameSequence(tResultArr, sResultArr, wResultVecArray);
 }
-
-// Remember to do error checking when parsing
-//     your command line
 
 // CLI program called buffer
 // params are

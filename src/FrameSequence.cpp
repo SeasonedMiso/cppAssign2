@@ -2,18 +2,42 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include "ass2.hpp"
+#include "FrameSequence.hpp"
 
 using namespace std;
+FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray)
+{
+    inputArgs inputArgs;
+    inputArgs.width = sResultArr[0];
+    inputArgs.height = sResultArr[1];
+    inputArgs.x1 = tResultArr[0];
+    inputArgs.y1 = tResultArr[1];
+    inputArgs.x2 = tResultArr[2];
+    inputArgs.y2 = tResultArr[3];
+    // wResultVecArray
 
-// ass2::ass2(int *tResultArr, int *sResultArr, vector<string[2]> wResultVecArray)
-ass2::ass2(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray)
-// ass2::ass2(int *tResultArr, int *sResultArr, string **wResultArray)
+    for (int j = 0; j < wResultVecArray.size(); j++)
+    {
+        cout << j << "\n";
+        wArgs tempW;
+        inputArgs.w.push_back(tempW);
+        inputArgs.w[j].operation = wResultVecArray[j][0];
+        inputArgs.w[j].name = wResultVecArray[j][1];
+        cout <<"name: "<< inputArgs.w[j].name << "\n";
+        cout << "operation: " << inputArgs.w[j].operation << "\n";
+        ;
+    }
+
+    // -w <string> <string> # write frames with <operation> <name>
+}
+
+FrameSequence::FrameSequence()
 {
 }
 
-ass2::ass2()
+FrameSequence::~FrameSequence()
 {
+    cout << "\n Destructor executed";
 }
 
 // PGM images are greyscale — meaning they have no colour, and use only one value to
