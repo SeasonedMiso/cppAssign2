@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -13,7 +14,6 @@ void badArg()
 }
 bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
 {
-    // int resArray[argNum];
     bool badConversion = false;
     for (int j = 1; j < argNum + 1; j++)
     {
@@ -37,12 +37,41 @@ bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
 }
 int main(int argc, char *argv[])
 {
+    int argsRead = 1;
+    int wTotal = 0;
+    int wCounter = 0;
+    int tResultArr[4];
+    int sResultArr[2];
+    for (int i = 0; i < 4; i++)
+    {
+        tResultArr[i] = 0;
+    }
+    for (int i = 0; i < 2; i++)
+    {
+        sResultArr[i] = 0;
+    }
     for (int i = 1; i < argc; i++)
     {
-        // cout << argv[i];
+        if (strcmp(argv[i], "-w") == 0)
+        {
+            wTotal++;
+        }
+    }
+    vector<vector<string>> wResultVecArray;
+    for (int i = 0; i < wTotal; i++)
+    {
+        wResultVecArray.push_back({"", ""});
+    }
+    for (int i = 1; i < argc; i++)
+    {
         if (strcmp(argv[i], "-t") == 0)
         {
-            int tResultArr[4];
+            argsRead += 5;
+            if (argc < argsRead)
+            {
+                badArg();
+            }
+
             if (parseIntArgs(4, i, argv, tResultArr))
             {
                 i += 4;
@@ -54,7 +83,12 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "-s") == 0)
         {
-            int sResultArr[2];
+            argsRead += 3;
+            if (argc < argsRead)
+            {
+                badArg();
+            }
+
             if (parseIntArgs(2, i, argv, sResultArr))
             {
                 i += 2;
@@ -66,8 +100,19 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "-w") == 0)
         {
-            cout << argv[i] << " is found\n";
+            argsRead += 3;
+            if (argc < argsRead)
+            {
+                badArg();
+            }
+            for (int j = 0; j < 2; j++)
+            {
+                wResultVecArray[wCounter][j] = argv[i + j + 1];
+                cout << wResultVecArray[wCounter][j] << "\n";
+            }
+            wCounter++;
         }
+        ass2(tResultArr, sResultArr, wResultVecArray);
     }
 }
 

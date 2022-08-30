@@ -6,6 +6,12 @@
 
 using namespace std;
 
+// ass2::ass2(int *tResultArr, int *sResultArr, vector<string[2]> wResultVecArray)
+ass2::ass2(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray)
+// ass2::ass2(int *tResultArr, int *sResultArr, string **wResultArray)
+{
+}
+
 ass2::ass2()
 {
 }
