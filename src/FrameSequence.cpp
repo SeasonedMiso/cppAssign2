@@ -5,9 +5,23 @@
 #include "FrameSequence.hpp"
 using namespace std;
 
-FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray)
+// Constructor -> frameLoop -> createFrame
+
+void FrameSequence::createFrame()
+{
+    // make frame and store in ram I guess?
+    return;
+}
+void FrameSequence::frameLoop(inputArgs inputArgs)
+{
+    createFrame();
+    // coordinate/
+    return;
+}
+FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, string inFilename)
 {
     inputArgs inputArgs;
+    inputArgs.filePath = inFilename;
     inputArgs.width = sResultArr[0];
     inputArgs.height = sResultArr[1];
     inputArgs.x1 = tResultArr[0];
@@ -19,13 +33,22 @@ FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<str
         wArgs tempW;
         inputArgs.w.push_back(tempW);
         inputArgs.w[j].operation = wResultVecArray[j][0];
+        // where none : no modification of data,
+        // invert : each pixel value v become 255 - v,
+        // reverse : 2 reverse output(write frames out from last to first),
+        // revinvert : reverse and invert out - put.
         inputArgs.w[j].name = wResultVecArray[j][1];
+        // The parameter<name> = name of sequence base e.g.sequence - 0000.pgm, sequence - 0001.pgm etc
+        // will be generated with<name> set to ‘sequence’.
     }
-    // printTest(inputArgs);
+    frameLoop(inputArgs);
 }
 void FrameSequence::printTest(inputArgs inArg)
 {
-    cout << "width: " << inArg.width << "\n";
+    cout
+        << "inPath: " << inArg.filePath << "\n";
+    cout
+        << "width: " << inArg.width << "\n";
     cout << "height: " << inArg.height << "\n";
     cout << "x1: " << inArg.x1 << "\n";
     cout << "x2: " << inArg.x2 << "\n";
@@ -34,13 +57,7 @@ void FrameSequence::printTest(inputArgs inArg)
     for (int j = 0; j < inArg.w.size(); j++)
     {
         cout << j << " name: " << inArg.w[j].name << "\n";
-        // The parameter<name> = name of sequence base e.g.sequence - 0000.pgm, sequence - 0001.pgm etc
-        // will be generated with<name> set to ‘sequence’.
         cout << j << " operation: " << inArg.w[j].operation << "\n";
-        // where none : no modification of data,
-        // invert : each pixel value v become 255 - v,
-        // reverse : 2 reverse output(write frames out from last to first),
-        //  revinvert : reverse and invert out - put.
     }
 }
 FrameSequence::FrameSequence()
@@ -56,6 +73,7 @@ FrameSequence::FrameSequence()
 
 FrameSequence::~FrameSequence()
 {
+    // deallocate each frame;
     cout << "\n Destructor executed";
 }
 

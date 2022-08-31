@@ -5,7 +5,10 @@
 #include <fstream>
 #include <vector>
 
-using namespace std;
+// make
+// ./out/extractor ./resources/Examples/sloan_image.pgm -t 0 10 5000 5000 -s 640 480 -w invert invseq -w none sequence2
+
+    using namespace std;
 
 void badArg()
 {
@@ -44,6 +47,7 @@ int main(int argc, char *argv[])
 {
     string temp = argv[1];
     string inFilename = (temp.find(".pgm")) != string::npos ? temp : "";
+    // check if file exists
     if (inFilename == "")
     {
         badIn();
@@ -125,7 +129,7 @@ int main(int argc, char *argv[])
             wCounter++;
         }
     }
-    FrameSequence(tResultArr, sResultArr, wResultVecArray);
+    FrameSequence(tResultArr, sResultArr, wResultVecArray, inFilename);
 }
 
 // CLI program called buffer
@@ -139,13 +143,8 @@ int main(int argc, char *argv[])
 
 // output has appropriate file numbering
 
-// NOTE : -t and -s are specified once, but you can have one or more - w operations specifed,
-// each of which outputs a different frame sequence.
-
 // ./extractor myLargeImage.pgm - t 0 10 5000 5000 - s 640 480 - w invert invseq - w none sequence2
 // You must format the output string for the frame file name to have enough leading 0’s
 // to ensure you can hold all your frames (up to 4 digits should be fine e.g. someting like
 // “%04d”). There are string format commands to manage this with C++ streams and
 // stringstreams.
-
-

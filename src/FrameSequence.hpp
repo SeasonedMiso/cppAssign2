@@ -11,6 +11,11 @@ typedef struct
 } wArgs;
 typedef struct
 {
+    vector<vector<int>> coordinate;
+} frame;
+typedef struct
+{
+    string filePath;
     int x1;
     int x2;
     int y1;
@@ -24,9 +29,11 @@ class FrameSequence
 {
 public:
     FrameSequence();
-    FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray);
+    FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, string inFilename);
     ~FrameSequence();
     void printTest(inputArgs inArg);
+    void createFrame();
+    void frameLoop(inputArgs inputArgs);
 
 private:
     vector<unsigned char **> imageSequence;
