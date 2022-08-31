@@ -21,7 +21,7 @@ FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<str
         inputArgs.w[j].operation = wResultVecArray[j][0];
         inputArgs.w[j].name = wResultVecArray[j][1];
     }
-    printTest(inputArgs);
+    // printTest(inputArgs);
 }
 void FrameSequence::printTest(inputArgs inArg)
 {
@@ -35,6 +35,7 @@ void FrameSequence::printTest(inputArgs inArg)
     {
         cout << j << " name: " << inArg.w[j].name << "\n";
         cout << j << " operation: " << inArg.w[j].operation << "\n";
+        // none | invert | reverse | revinvert
     }
 }
 FrameSequence::FrameSequence()
@@ -46,8 +47,6 @@ FrameSequence::FrameSequence()
     inputArgs.y1 = 0;
     inputArgs.x2 = 0;
     inputArgs.y2 = 0;
-    // wArgs tempW;
-    // inputArgs.w.push_back(tempW);
 }
 
 FrameSequence::~FrameSequence()

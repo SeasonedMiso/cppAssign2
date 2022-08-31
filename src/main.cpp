@@ -12,6 +12,11 @@ void badArg()
     cout << "error: user provided bad arguement";
     exit(1);
 }
+void badIn()
+{
+    cout << "error: bad username";
+    exit(1);
+}
 bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
 {
     bool badConversion = false;
@@ -37,7 +42,14 @@ bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
 }
 int main(int argc, char *argv[])
 {
-    int argsRead = 1;
+    string temp = argv[1];
+    // cout << temp.find(".") << "\n";
+    string inFilename = (temp.find(".")) != string::npos ? temp : "";
+    if (inFilename == "")
+    {
+        badIn();
+    }
+    int argsRead = 2;
     int wTotal = 0;
     int wCounter = 0;
     int tResultArr[4];
@@ -103,16 +115,18 @@ int main(int argc, char *argv[])
             {
                 badArg();
             }
+            if ((strcmp(argv[i + 1], "none") && strcmp(argv[i + 1], "invert") && strcmp(argv[i + 1], "reverse") && strcmp(argv[i + 1], "revinvert")))
+            {
+                badArg();
+            }
             for (int j = 0; j < 2; j++)
             {
                 wResultVecArray[wCounter][j] = argv[i + j + 1];
-    
             }
             wCounter++;
         }
     }
-    
-        FrameSequence(tResultArr, sResultArr, wResultVecArray);
+    FrameSequence(tResultArr, sResultArr, wResultVecArray);
 }
 
 // CLI program called buffer
@@ -126,15 +140,6 @@ int main(int argc, char *argv[])
 
 // output has appropriate file numbering
 
-// cli
-// extractor <inputPGMfile> [options]
-//-t <int> <int> <int> <int> # x1 y1 x2 y2 (begin & end origin pixel coords,
-// for frame trajectory)
-// -s <int> <int> # <width> <height> (size of small frame in
-// pixels)
-// -w <string> <string> # write frames with <operation> <name>
-
-// For the - w flag, the parameter<operation> = none | invert | reverse | revinvert,
 // where none : no modification of data, invert : each pixel value v become 255 - v,
 // reverse : 2 reverse output(write frames out from last to first),
 //  revinvert : reverse and invert out - put.
