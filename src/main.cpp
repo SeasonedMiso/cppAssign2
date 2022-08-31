@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
             for (int j = 0; j < 2; j++)
             {
                 wResultVecArray[wCounter][j] = argv[i + j + 1];
-                // cout << wResultVecArray[wCounter][j] << "\n";
+    
             }
             wCounter++;
         }

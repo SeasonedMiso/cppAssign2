@@ -3,8 +3,8 @@
 #include <sstream>
 #include <fstream>
 #include "FrameSequence.hpp"
-
 using namespace std;
+
 FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray)
 {
     inputArgs inputArgs;
@@ -14,25 +14,40 @@ FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<str
     inputArgs.y1 = tResultArr[1];
     inputArgs.x2 = tResultArr[2];
     inputArgs.y2 = tResultArr[3];
-    // wResultVecArray
-
     for (int j = 0; j < wResultVecArray.size(); j++)
     {
-        cout << j << "\n";
         wArgs tempW;
         inputArgs.w.push_back(tempW);
         inputArgs.w[j].operation = wResultVecArray[j][0];
         inputArgs.w[j].name = wResultVecArray[j][1];
-        cout <<"name: "<< inputArgs.w[j].name << "\n";
-        cout << "operation: " << inputArgs.w[j].operation << "\n";
-        ;
     }
-
-    // -w <string> <string> # write frames with <operation> <name>
+    printTest(inputArgs);
 }
-
+void FrameSequence::printTest(inputArgs inArg)
+{
+    cout << "width: " << inArg.width << "\n";
+    cout << "height: " << inArg.height << "\n";
+    cout << "x1: " << inArg.x1 << "\n";
+    cout << "x2: " << inArg.x2 << "\n";
+    cout << "y1: " << inArg.y1 << "\n";
+    cout << "y2: " << inArg.y2 << "\n";
+    for (int j = 0; j < inArg.w.size(); j++)
+    {
+        cout << j << " name: " << inArg.w[j].name << "\n";
+        cout << j << " operation: " << inArg.w[j].operation << "\n";
+    }
+}
 FrameSequence::FrameSequence()
 {
+    inputArgs inputArgs;
+    inputArgs.width = 0;
+    inputArgs.height = 0;
+    inputArgs.x1 = 0;
+    inputArgs.y1 = 0;
+    inputArgs.x2 = 0;
+    inputArgs.y2 = 0;
+    // wArgs tempW;
+    // inputArgs.w.push_back(tempW);
 }
 
 FrameSequence::~FrameSequence()

@@ -4,7 +4,6 @@
 #include <vector>
 using namespace std;
 
-// -w abc def -w a b
 typedef struct
 {
     string operation;
@@ -19,17 +18,7 @@ typedef struct
     int width;
     int height;
     vector<wArgs> w;
-    // w[0]
-    //     name abc
-    //     operation def
-    // w[1]
-    //     name a
-    //     operation b
 } inputArgs;
-
-// inputArgs a;
-// // a.w[0].operation;
-// a.x1;
 
 class FrameSequence
 {
@@ -37,10 +26,10 @@ public:
     FrameSequence();
     FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray);
     ~FrameSequence();
+    void printTest(inputArgs inArg);
 
 private:
-    vector<unsigned char **>
-        imageSequence;
+    vector<unsigned char **> imageSequence;
     // each element is a point to dynam allocated 2D image frame.
     // must be able to acces each pixel of each frame i, using imageSequence[i][y][x]
     // need class destructor
