@@ -34,8 +34,13 @@ void FrameSequence::printTest(inputArgs inArg)
     for (int j = 0; j < inArg.w.size(); j++)
     {
         cout << j << " name: " << inArg.w[j].name << "\n";
+        // The parameter<name> = name of sequence base e.g.sequence - 0000.pgm, sequence - 0001.pgm etc
+        // will be generated with<name> set to ‘sequence’.
         cout << j << " operation: " << inArg.w[j].operation << "\n";
-        // none | invert | reverse | revinvert
+        // where none : no modification of data,
+        // invert : each pixel value v become 255 - v,
+        // reverse : 2 reverse output(write frames out from last to first),
+        //  revinvert : reverse and invert out - put.
     }
 }
 FrameSequence::FrameSequence()

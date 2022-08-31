@@ -14,7 +14,7 @@ void badArg()
 }
 void badIn()
 {
-    cout << "error: bad username";
+    cout << "error: bad input file";
     exit(1);
 }
 bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
@@ -43,8 +43,7 @@ bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
 int main(int argc, char *argv[])
 {
     string temp = argv[1];
-    // cout << temp.find(".") << "\n";
-    string inFilename = (temp.find(".")) != string::npos ? temp : "";
+    string inFilename = (temp.find(".pgm")) != string::npos ? temp : "";
     if (inFilename == "")
     {
         badIn();
@@ -140,11 +139,6 @@ int main(int argc, char *argv[])
 
 // output has appropriate file numbering
 
-// where none : no modification of data, invert : each pixel value v become 255 - v,
-// reverse : 2 reverse output(write frames out from last to first),
-//  revinvert : reverse and invert out - put.
-// The parameter<name> = name of sequence base e.g.sequence - 0000.pgm, sequence - 0001.pgm etc
-// will be generated with<name> set to ‘sequence’.
 // NOTE : -t and -s are specified once, but you can have one or more - w operations specifed,
 // each of which outputs a different frame sequence.
 
@@ -154,7 +148,4 @@ int main(int argc, char *argv[])
 // “%04d”). There are string format commands to manage this with C++ streams and
 // stringstreams.
 
-// provide a README file explaining what each file submitted does and
-//     how it fits into the program as a whole.The README file should not explain any
-//         theory that you have used.The README be used by the tutors if they encounter
-//             any problems
+

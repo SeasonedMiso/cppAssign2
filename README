@@ -1,3 +1,8 @@
 WRITE README
 
 ensure that your tarball works and is not corrupt
+
+// provide a README file explaining what each file submitted does and
+// how it fits into the program as a whole.The README file should not explain any
+// theory that you have used.The README be used by the tutors if they encounter
+// any problems
