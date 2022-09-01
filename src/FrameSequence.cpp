@@ -10,13 +10,56 @@ using namespace std;
 void FrameSequence::createFrame()
 {
     // make frame and store in ram I guess?
+
     return;
 }
+
 void FrameSequence::frameLoop(inputArgs inputArgs)
 {
-    createFrame();
-    // coordinate/
-    return;
+    int row = 0, col = 0, numrows = 0, numcols = 0;
+    ifstream infile(inputArgs.filePath);
+    stringstream ss;
+    string inputLine = "";
+
+    getline(infile, inputLine);
+    cout << "Version : " << inputLine << endl;
+    getline(infile, inputLine);
+    // Assuming comment starts with a #
+    if (inputLine.compare("#") == 1)
+    {
+        cout << "Comment : " << inputLine << endl;
+        ss << infile.rdbuf();
+        ss >> numcols >> numrows;
+    }
+    else
+    {
+        numcols = stoi(inputLine.substr(0, inputLine.find(" ")));
+        numrows = stoi(inputLine.substr(inputLine.find(" "), inputLine.length()));
+        ss << infile.rdbuf();
+    }
+
+    cout << numcols << " columns and " << numrows << " rows" << endl;
+
+    int array[numrows][numcols];
+    for (row = 0; row < numrows; row++)
+    {
+        for (col = 0; col < numcols; col++)
+        {
+            ss >> array[row][col];
+            cout << array[row][col];
+        }
+    }
+
+    // // Now print the array to see the result
+    // for (row = 0; row < numrows; ++row)
+    // {
+    //     for (col = 0; col < numcols; ++col)
+    //     {
+    //         cout << array[row][col] << " ";
+    //     }
+    //     cout << endl;
+    // }
+    infile.close();
 }
 FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, string inFilename)
 {
@@ -70,7 +113,6 @@ FrameSequence::FrameSequence()
     inputArgs.x2 = 0;
     inputArgs.y2 = 0;
 }
-
 FrameSequence::~FrameSequence()
 {
     // deallocate each frame;

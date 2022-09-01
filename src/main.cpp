@@ -8,8 +8,13 @@
 // make
 // ./out/extractor ./resources/Examples/sloan_image.pgm -t 0 10 5000 5000 -s 640 480 -w invert invseq -w none sequence2
 
-    using namespace std;
+using namespace std;
 
+bool fileExists(string fileName)
+{
+    ifstream infile(fileName);
+    return infile.good();
+}
 void badArg()
 {
     cout << "error: user provided bad arguement";
@@ -47,8 +52,7 @@ int main(int argc, char *argv[])
 {
     string temp = argv[1];
     string inFilename = (temp.find(".pgm")) != string::npos ? temp : "";
-    // check if file exists
-    if (inFilename == "")
+    if (inFilename == "" || !fileExists(inFilename))
     {
         badIn();
     }
