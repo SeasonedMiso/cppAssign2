@@ -7,7 +7,6 @@
 using namespace std;
 
 // Constructor -> frameLoop -> createFrame
-
 void FrameSequence::createFrame()
 {
     // make frame and store in ram I guess?
@@ -17,16 +16,37 @@ void FrameSequence::createFrame()
 
 using namespace std;
 
+void FrameSequence::writeFile(vector<vector<u_char>> grid, inputArgs inputArgs)
+{
+    // write header
+    ofstream myfile("abc.pgm", ios::binary);
+    // P5 10 10 255
+    string temp = to_string(grid.size());
+    char const *height = temp.c_str();
+    temp = to_string(grid[0].size());
+    char const *width = temp.c_str();
+    myfile.write("P5\n", 3);
+    myfile.write(width, 2);
+    myfile.write(" ", 1);
+    myfile.write(height, 2);
+    myfile.write("\n255\n\n", 6);
+    for (int y = 0; y < grid.size(); y++)
+    {
+        for (int x = 0; x < grid[0].size(); x++)
+        {
+            myfile.write((char *)&grid[y][x], 1);
+        }
+    }
+    myfile.close();
+}
+
 void FrameSequence::frameLoop(inputArgs inputArgs)
 {
-    // // ios::binary::
-    // ifstream fin(inputArgs.filePath, ios::binary);
-    // file.read(reinterpret_cast<char *>(data), sizeof data);
-    // int row = 0, col = 0, numrows = 0, numcols = 0;
-    // ifstream *pInFile = new ifstream;
+}
+vector<vector<u_char>> FrameSequence::parseFile(inputArgs inputArgs)
+{
     string myText;
     ifstream MyFile(inputArgs.filePath, ios::binary);
-    int i;
     string version;
     string comment = "";
 
@@ -45,72 +65,24 @@ void FrameSequence::frameLoop(inputArgs inputArgs)
     stringstream widthHeight(myText);
     widthHeight >> width;
     widthHeight >> height;
-    // cout << width << height;
     getline(MyFile, myText);
     stringstream rangeSS(myText);
     rangeSS >> range;
-    u_char pixel = 212;
-    // unsigned char pixel = ' ';
-    // vector<vector<u_char>> grid;
+    getline(MyFile, myText);
+    u_char pixelBuffer[1];
     vector<vector<u_char>> grid;
     for (int y = 0; y < height; y++)
     {
         grid.push_back({});
         for (int x = 0; x < width; x++)
         {
-            MyFile.read(reinterpret_cast<char *>(pixel), 1);
-            grid[y].push_back(pixel);
+            MyFile.read(reinterpret_cast<char *>(pixelBuffer), 1);
+            grid[y].push_back(pixelBuffer[0]);
         }
     }
-    // for (int y = 0; y < height; y++)
-    // {
-    //     for (int x = 0; x < width; x++)
-    //     {
-    //         cout << grid[y][x];
-    //     }
-    // }
-
-    // file.read(reinterpret_cast<char *>(data), sizeof data);
-    // reading in the data as block
-    // of unsigned char data of width * height bytes in size, and this must be read into a
-    // unsigned char buffer, not int buffer;
-
-    // vector<unsigned char> raster(width * height);
-    // MyFile.read(raster.data(), width * height);
-
-    // while (!MyFile.eof())
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     // memset(array, 0, 8);
-    //     // MyFile.read(array, 8 - 1);
-    //     // cout << "Next byte data chunk: "
-    //     //      << array << endl;
-    //     MyFile.read(array, 0);
-    //     cout << "Next byte data chunk: "
-    //          << array << "\n";
-    // }
     MyFile.close();
+    return grid;
 }
-// file.read(reinterpret_cast<char *>(data), sizeof data);
-
-// Two common issues with reading a binary PGM :
-//  (1) not opening the file in binary mode(ios::binary) and
-//  (2) not consuming extra white space from the header(read using << as regular text I / O)
-//  remember to add in the "ws" manipulator after reading in the "255"(max image value)to suck up
-//   the last \n etc in input buffer befor ebinary block starts.If you don't, your image will have
-//    (at least) a weird sheared/warped apppearance. Also, as a sanity check, after reading the
-//    image, write it out again immediately to test - when you view this in Gimp or any image
-//    viewer the image should look identical to the input image.
-
-// in the past this issue was caused mainly by(1) not reading in the data as block
-// of unsigned char data of width * height bytes in size, and this must be read into a
-// unsigned char buffer, not int buffer;
-// (2) issuing the binary read() before *all *text header i
-// nformation(including the newline / white space after the 255) had been consumed.T
-// he entire text header needs to be read(using getline() and << and ws, as appropriate)
-// before the single read() is issued.Writing the file back out usually won't cause issued
-// (as long as the text header is written with >> and then a single write() of the buffer content
-// is issued.
 
 FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename)
 {
@@ -136,7 +108,7 @@ FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<str
         // will be generated with<name> set to ‘sequence’.
     }
     // read_pgm_image(inputArgs.filePath);
-    frameLoop(inputArgs);
+    writeFile(parseFile(inputArgs), inputArgs);
 }
 void FrameSequence::printTest(inputArgs inArg)
 {

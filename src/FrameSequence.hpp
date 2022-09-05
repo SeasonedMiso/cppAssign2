@@ -15,7 +15,7 @@ typedef struct
 } frame;
 typedef struct
 {
-    char* filePath;
+    char *filePath;
     int x1;
     int x2;
     int y1;
@@ -29,8 +29,10 @@ class FrameSequence
 {
 public:
     FrameSequence();
-    FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char* inFilename);
+    FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename);
     ~FrameSequence();
+    vector<vector<unsigned char>> parseFile(inputArgs inputArgs);
+    void writeFile(vector<vector<unsigned char>> grid, inputArgs inputArgs);
     void printTest(inputArgs inArg);
     void createFrame();
     void frameLoop(inputArgs inputArgs);
