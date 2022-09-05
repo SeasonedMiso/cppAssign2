@@ -10,7 +10,7 @@
 
 using namespace std;
 
-bool fileExists(string fileName)
+bool fileExists(char *fileName)
 {
     ifstream infile(fileName);
     return infile.good();
@@ -50,12 +50,13 @@ bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
 }
 int main(int argc, char *argv[])
 {
-    string temp = argv[1];
-    string inFilename = (temp.find(".pgm")) != string::npos ? temp : "";
-    if (inFilename == "" || !fileExists(inFilename))
-    {
-        badIn();
-    }
+    // string temp = argv[1];
+    // string inFilename = (temp.find(".pgm")) != string::npos ? temp : "";
+    char *inFilename = argv[1];
+    // if (inFilename == "" || !fileExists(inFilename))
+    // {
+    //     badIn();
+    // }
     int argsRead = 2;
     int wTotal = 0;
     int wCounter = 0;
@@ -142,6 +143,14 @@ int main(int argc, char *argv[])
 // default constructor too:
 // sets up deconstructor (empty arg list, not void), frees up resources when obj out of scope.
 // FrameSequence::~FrameSequence();
+
+// // Allocate and deallocate single object
+// myobject *myobjptr = new myobject;
+// delete myobjptr;
+// // Allocate and deallocate array of objects
+// int *intptr = new int[30];
+// delete[] intptr; // NB! Brackets
+
 // raw mem allocation for each frame.
 // iterates through vec and free up allocated mem. (activated automatically)
 
