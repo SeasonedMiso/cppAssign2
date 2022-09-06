@@ -5,9 +5,6 @@
 #include <fstream>
 #include <vector>
 
-// make
-// ./out/extractor ./resources/Examples/sloan_image.pgm -t 0 10 5000 5000 -s 640 480 -w invert invseq -w none sequence2
-
 using namespace std;
 
 bool fileExists(char *fileName)

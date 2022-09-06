@@ -12,8 +12,6 @@
 using namespace std;
 
 // deal with 1st pixel of each row
-// deal with if x2 is out of scope with regards to width
-// obv same for y2 and height
 
 void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename)
 {
