@@ -11,6 +11,8 @@
 #include "FrameSequence.hpp"
 using namespace std;
 
+// ./ out / extractor./ resources / Examples / test.pgm - t 0 10 5000 5000 - s 640 480 - w invert invseq - w none sequence2
+
 FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename)
 {
     inputArgs inputArgs;
@@ -21,6 +23,7 @@ FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<str
     inputArgs.y1 = tResultArr[1];
     inputArgs.x2 = tResultArr[2];
     inputArgs.y2 = tResultArr[3];
+    // check for what happens if x2 is out of scope.
     for (int j = 0; j < wResultVecArray.size(); j++)
     {
         wArgs tempW;
@@ -29,13 +32,28 @@ FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<str
         inputArgs.w[j].name = wResultVecArray[j][1];
     }
 
-    PGMImage *pgm = (PGMImage *)malloc(sizeof(PGMImage));
-    // const char *ipfile;
+    pgm = (PGMImage *)malloc(sizeof(PGMImage));
     if (openPGM(pgm, inputArgs.filePath))
     {
+        if (inputArgs.w.size() == 0)
+        {
+            defaultSequence(pgm, inputArgs, (char *)"./out/default.pgm");
+        }
+        else
+        {
+            for (int j = 0; j < inputArgs.w.size(); j++)
+            {
+                if (strcmp(inputArgs.w[j].operation.c_str(), "none") == 0)
+                {
+                    string path = "./out/" + inputArgs.w[j].name;
+                    defaultSequence(pgm, inputArgs, (char *)path.c_str());
+                    cout << "writtenFile" << endl;
+                }
+            }
+        }
         writePGM(pgm, "./out/outName.pgm");
-        // printImageDetails(pgm, inputArgs.filePath);
-        // cout << pgm->data[0];
+        closePGM(pgm, inputArgs);
+        free(pgm);
     }
 }
 FrameSequence::FrameSequence()
@@ -50,21 +68,28 @@ FrameSequence::FrameSequence()
 }
 FrameSequence::~FrameSequence()
 {
-    // deallocate each frame;
-    cout << "\n Destructor executed";
+    cout
+        << "\n Destructor executed";
 }
-
+void FrameSequence::closePGM(PGMImage *pgm, inputArgs inArgs)
+{
+    // deallocate image;
+    for (int i = 0; i < inArgs.height; i++)
+    {
+        free(pgm->data[i]);
+    }
+    free(pgm->data);
+    return;
+}
 bool FrameSequence::writePGM(PGMImage *pgm,
                              const char *filename)
 {
     ofstream myfile(filename, ios::binary);
     myfile.write("P5\n", 3);
-    myfile.write(to_string(pgm->width).c_str(), 2);
+    myfile.write(to_string(pgm->width).c_str(), to_string(pgm->width).length());
     myfile.write(" ", 1);
-    myfile.write(to_string(pgm->height).c_str(), 2);
+    myfile.write(to_string(pgm->height).c_str(), to_string(pgm->height).length());
     myfile.write("\n255\n\n", 6);
-    cout << pgm->width << endl;
-    cout << pgm->height << endl;
     for (int i = 0;
          i < pgm->height; i++)
     {
@@ -178,4 +203,40 @@ void FrameSequence::printImageDetails(PGMImage *pgm,
 
     // close file
     fclose(pgmfile);
+}
+void FrameSequence::defaultSequence(PGMImage *pgm, inputArgs inArgs, char *outName)
+{
+    int startY = inArgs.y1;
+    int endY = inArgs.y1 + inArgs.height;
+    int startX = inArgs.x1;
+    int endX = inArgs.x1 + inArgs.width;
+    for (int f = 0; f < inArgs.x2 - inArgs.x1; f++)
+    {
+        PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
+        newPgm->height = inArgs.height;
+        newPgm->width = inArgs.width;
+        newPgm->data = (unsigned char **)malloc(newPgm->height * sizeof(unsigned char *));
+        for (int y = startY; y < endY; y++)
+        {
+            newPgm->data[y - startY] = (unsigned char *)malloc(newPgm->width + 1 * sizeof(unsigned char));
+            for (int x = startX; x < endX; x++)
+            {
+                newPgm->data[y - startY][x - startX] = pgm->data[y][x];
+            }
+        }
+        string outNameTemp = (string)outName;
+        string outFrameName = outNameTemp.substr(0, outNameTemp.find_last_of(".")) + to_string(f) + ".pgm";
+        writePGM(newPgm, outFrameName.c_str());
+        // for some reason first pixel on each line is wrong?
+        for (int i = 0; i < inArgs.y2 - inArgs.y1; i++)
+        {
+            free(newPgm->data[i]);
+        }
+        free(newPgm->data);
+        free(newPgm);
+        startX++;
+        startY++;
+        endX++;
+        endY++;
+    }
 }

@@ -99,6 +99,12 @@ int main(int argc, char *argv[])
             {
                 badArg();
             }
+            if (tResultArr[2] - tResultArr[0] != tResultArr[3] - tResultArr[1])
+            {
+                cout << "inconsistent coords" << endl;
+                badArg();
+            }
+            // check that x2 and y2 dist to x1 y1 is the same
         }
         if (strcmp(argv[i], "-s") == 0)
         {

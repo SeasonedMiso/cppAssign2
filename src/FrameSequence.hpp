@@ -46,9 +46,12 @@ public:
                            const char *filename);
     bool writePGM(PGMImage *pgm,
                   const char *filename);
+    void closePGM(PGMImage *pgm, inputArgs inArgs);
+    void defaultSequence(PGMImage *pgm, inputArgs inArgs, char *outName);
 
 private:
     vector<unsigned char **> imageSequence;
+    PGMImage *pgm;
 };
 
 #endif
