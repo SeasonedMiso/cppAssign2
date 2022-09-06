@@ -4,6 +4,14 @@
 #include <vector>
 using namespace std;
 
+typedef struct PGMImage
+{
+    char pgmType[3];
+    unsigned char **data;
+    unsigned int width;
+    unsigned int height;
+    unsigned int maxValue;
+} PGMImage;
 typedef struct
 {
     string operation;
@@ -31,21 +39,16 @@ public:
     FrameSequence();
     FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename);
     ~FrameSequence();
-    vector<vector<unsigned char>> parseFile(inputArgs inputArgs);
-    void writeFile(vector<vector<unsigned char>> grid, inputArgs inputArgs);
-    void printTest(inputArgs inArg);
-    void createFrame();
-    void frameLoop(inputArgs inputArgs);
-    // vector<vector<int>> read_pgm_image(char fileName[]);
+    void commentParse(FILE *filepointer);
+    bool openPGM(PGMImage *pgm,
+                 const char *filename);
+    void printImageDetails(PGMImage *pgm,
+                           const char *filename);
+    bool writePGM(PGMImage *pgm,
+                  const char *filename);
 
 private:
     vector<unsigned char **> imageSequence;
-    // each element is a point to dynam allocated 2D image frame.
-    // must be able to acces each pixel of each frame i, using imageSequence[i][y][x]
-    // need class destructor
-    // image in and out are PGM files
-    // after frame extraction, delete pgmIn from mem.
-    // consider using a buffer
 };
 
 #endif
