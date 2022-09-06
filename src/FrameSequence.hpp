@@ -46,8 +46,10 @@ public:
                            const char *filename);
     bool writePGM(PGMImage *pgm,
                   const char *filename);
-    void closePGM(PGMImage *pgm, inputArgs inArgs);
+    void closePGM(PGMImage *pgm);
     void defaultSequence(PGMImage *pgm, inputArgs inArgs, char *outName);
+    PGMImage *invertPGM(PGMImage *pgm);
+    void reversePGM(PGMImage *pgm, inputArgs inArgs, char *outName);
 
 private:
     vector<unsigned char **> imageSequence;

@@ -11,8 +11,6 @@
 #include "FrameSequence.hpp"
 using namespace std;
 
-// ./ out / extractor./ resources / Examples / test.pgm - t 0 10 5000 5000 - s 640 480 - w invert invseq - w none sequence2
-
 FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename)
 {
     inputArgs inputArgs;
@@ -49,10 +47,35 @@ FrameSequence::FrameSequence(int *tResultArr, int *sResultArr, vector<vector<str
                     defaultSequence(pgm, inputArgs, (char *)path.c_str());
                     cout << "writtenFile" << endl;
                 }
+                if (strcmp(inputArgs.w[j].operation.c_str(), "invert") == 0)
+                {
+                    string path = "./out/" + inputArgs.w[j].name;
+                    PGMImage *invertedPGM = invertPGM(pgm);
+                    defaultSequence(invertedPGM, inputArgs, (char *)path.c_str());
+                    closePGM(invertedPGM);
+                    cout
+                        << "writtenFile" << endl;
+                }
+                if (strcmp(inputArgs.w[j].operation.c_str(), "reverse") == 0)
+                {
+                    string path = "./out/" + inputArgs.w[j].name;
+                    reversePGM(pgm, inputArgs, (char *)path.c_str());
+                    cout
+                        << "writtenFile" << endl;
+                }
+                if (strcmp(inputArgs.w[j].operation.c_str(), "revinvert") == 0)
+                {
+                    string path = "./out/" + inputArgs.w[j].name;
+                    PGMImage *invertedPGM = invertPGM(pgm);
+                    reversePGM(invertedPGM, inputArgs, (char *)path.c_str());
+                    closePGM(invertedPGM);
+                    cout
+                        << "writtenFile" << endl;
+                }
             }
         }
         writePGM(pgm, "./out/outName.pgm");
-        closePGM(pgm, inputArgs);
+        closePGM(pgm);
         free(pgm);
     }
 }
@@ -71,10 +94,10 @@ FrameSequence::~FrameSequence()
     cout
         << "\n Destructor executed";
 }
-void FrameSequence::closePGM(PGMImage *pgm, inputArgs inArgs)
+void FrameSequence::closePGM(PGMImage *pgm)
 {
     // deallocate image;
-    for (int i = 0; i < inArgs.height; i++)
+    for (int i = 0; i < pgm->height; i++)
     {
         free(pgm->data[i]);
     }
@@ -225,14 +248,17 @@ void FrameSequence::defaultSequence(PGMImage *pgm, inputArgs inArgs, char *outNa
             }
         }
         string outNameTemp = (string)outName;
-
         stringstream ss;
         ss << setw(4) << setfill('0') << f;
         string fileNo = ss.str();
-
-        string outFrameName = outNameTemp.substr(0, outNameTemp.find_last_of(".")) + fileNo + ".pgm";
+        if (outNameTemp.find('.') == std::string::npos)
+        {
+            outNameTemp = outNameTemp.substr(0, outNameTemp.find_last_of("."));
+        }
+        string outFrameName = outNameTemp + "-" + fileNo + ".pgm ";
         writePGM(newPgm, outFrameName.c_str());
         // for some reason first pixel on each line is wrong?
+
         for (int i = 0; i < inArgs.y2 - inArgs.y1; i++)
         {
             free(newPgm->data[i]);
@@ -243,5 +269,66 @@ void FrameSequence::defaultSequence(PGMImage *pgm, inputArgs inArgs, char *outNa
         startY++;
         endX++;
         endY++;
+    }
+}
+
+PGMImage *FrameSequence::invertPGM(PGMImage *pgm)
+{
+    PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
+    newPgm->height = pgm->height;
+    newPgm->width = pgm->width;
+    newPgm->data = (unsigned char **)malloc(newPgm->height * sizeof(unsigned char *));
+    for (int y = 0; y < pgm->height; y++)
+    {
+        newPgm->data[y] = (unsigned char *)malloc(newPgm->width + 1 * sizeof(unsigned char));
+        for (int x = 0; x < pgm->width; x++)
+        {
+            newPgm->data[y][x] = (u_char)(255 - (int)pgm->data[y][x]);
+        }
+    }
+    return newPgm;
+}
+void FrameSequence::reversePGM(PGMImage *pgm, inputArgs inArgs, char *outName)
+{
+    int startY = inArgs.y2;
+    int endY = inArgs.y2 + inArgs.height;
+    int startX = inArgs.x2;
+    int endX = inArgs.x2 + inArgs.width;
+    for (int f = 0; f < inArgs.x2 - inArgs.x1; f++)
+    {
+        PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
+        newPgm->height = inArgs.height;
+        newPgm->width = inArgs.width;
+        newPgm->data = (unsigned char **)malloc(newPgm->height * sizeof(unsigned char *));
+        for (int y = startY; y < endY; y++)
+        {
+            newPgm->data[y - startY] = (unsigned char *)malloc(newPgm->width + 1 * sizeof(unsigned char));
+            for (int x = startX; x < endX; x++)
+            {
+                newPgm->data[y - startY][x - startX] = pgm->data[y][x];
+            }
+        }
+        string outNameTemp = (string)outName;
+        stringstream ss;
+        ss << setw(4) << setfill('0') << f;
+        string fileNo = ss.str();
+        if (outNameTemp.find('.') == std::string::npos)
+        {
+            outNameTemp = outNameTemp.substr(0, outNameTemp.find_last_of("."));
+        }
+        string outFrameName = outNameTemp + "-" + fileNo + ".pgm ";
+        writePGM(newPgm, outFrameName.c_str());
+        // for some reason first pixel on each line is wrong?
+
+        for (int i = 0; i < inArgs.y2 - inArgs.y1; i++)
+        {
+            free(newPgm->data[i]);
+        }
+        free(newPgm->data);
+        free(newPgm);
+        startX--;
+        startY--;
+        endX--;
+        endY--;
     }
 }

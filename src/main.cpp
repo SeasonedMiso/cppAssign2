@@ -105,6 +105,8 @@ int main(int argc, char *argv[])
                 badArg();
             }
             // check that x2 and y2 dist to x1 y1 is the same
+            // starting origin(0, 10) and final origin(5000, 5000)??
+            // how do we do this if its not the same both ways?
         }
         if (strcmp(argv[i], "-s") == 0)
         {
