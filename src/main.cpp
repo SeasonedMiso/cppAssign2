@@ -99,14 +99,15 @@ int main(int argc, char *argv[])
             {
                 badArg();
             }
-            if (tResultArr[2] - tResultArr[0] != tResultArr[3] - tResultArr[1])
+            // deal with if distance between x1&x2 is not the same as y1&y2
+            if (tResultArr[2] - tResultArr[0] > tResultArr[3] - tResultArr[1])
             {
-                cout << "inconsistent coords" << endl;
-                badArg();
+                tResultArr[2] -= (tResultArr[2] - tResultArr[0]) - (tResultArr[3] - tResultArr[1]);
             }
-            // check that x2 and y2 dist to x1 y1 is the same
-            // starting origin(0, 10) and final origin(5000, 5000)??
-            // how do we do this if its not the same both ways?
+            if (tResultArr[2] - tResultArr[0] < tResultArr[3] - tResultArr[1])
+            {
+                tResultArr[3] -= (tResultArr[3] - tResultArr[1]) - (tResultArr[2] - tResultArr[0]);
+            }
         }
         if (strcmp(argv[i], "-s") == 0)
         {
