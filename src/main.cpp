@@ -142,30 +142,7 @@ int main(int argc, char *argv[])
             wCounter++;
         }
     }
-    FrameSequence(tResultArr, sResultArr, wResultVecArray, inFilename);
+    FrameSequence *a = new FrameSequence;
+    a->makeFrames(tResultArr, sResultArr, wResultVecArray, inFilename);
+    delete (a);
 }
-
-// CLI program called buffer
-// params are
-
-// default constructor too:
-// sets up deconstructor (empty arg list, not void), frees up resources when obj out of scope.
-// FrameSequence::~FrameSequence();
-
-// // Allocate and deallocate single object
-// myobject *myobjptr = new myobject;
-// delete myobjptr;
-// // Allocate and deallocate array of objects
-// int *intptr = new int[30];
-// delete[] intptr; // NB! Brackets
-
-// raw mem allocation for each frame.
-// iterates through vec and free up allocated mem. (activated automatically)
-
-// output has appropriate file numbering
-
-// ./extractor myLargeImage.pgm - t 0 10 5000 5000 - s 640 480 - w invert invseq - w none sequence2
-// You must format the output string for the frame file name to have enough leading 0’s
-// to ensure you can hold all your frames (up to 4 digits should be fine e.g. someting like
-// “%04d”). There are string format commands to manage this with C++ streams and
-// stringstreams.

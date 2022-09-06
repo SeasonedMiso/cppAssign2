@@ -37,7 +37,7 @@ class FrameSequence
 {
 public:
     FrameSequence();
-    FrameSequence(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename);
+    void makeFrames(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename);
     ~FrameSequence();
     void commentParse(FILE *filepointer);
     bool openPGM(PGMImage *pgm,
@@ -47,13 +47,14 @@ public:
     bool writePGM(PGMImage *pgm,
                   const char *filename);
     void closePGM(PGMImage *pgm);
-    void defaultSequence(PGMImage *pgm, inputArgs inArgs, char *outName);
+    void defaultSequence(PGMImage *pgm, char *outName);
     PGMImage *invertPGM(PGMImage *pgm);
-    void reversePGM(PGMImage *pgm, inputArgs inArgs, char *outName);
+    void reversePGM(PGMImage *pgm, char *outName);
 
 private:
     vector<unsigned char **> imageSequence;
     PGMImage *pgm;
+    inputArgs inputArgs;
 };
 
 #endif
