@@ -50,13 +50,7 @@ bool parseIntArgs(int argNum, int i, char *argv[], int *resArray)
 }
 int main(int argc, char *argv[])
 {
-    // string temp = argv[1];
-    // string inFilename = (temp.find(".pgm")) != string::npos ? temp : "";
     char *inFilename = argv[1];
-    // if (inFilename == "" || !fileExists(inFilename))
-    // {
-    //     badIn();
-    // }
     int argsRead = 2;
     int wTotal = 0;
     int wCounter = 0;

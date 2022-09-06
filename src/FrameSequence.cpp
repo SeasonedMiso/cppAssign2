@@ -24,7 +24,6 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     inputArgs.y1 = tResultArr[1];
     inputArgs.x2 = tResultArr[2];
     inputArgs.y2 = tResultArr[3];
-    // check for what happens if x2 is out of scope.
     for (int j = 0; j < wResultVecArray.size(); j++)
     {
         wArgs tempW;
@@ -161,6 +160,12 @@ bool FrameSequence::openPGM(PGMImage *pgm,
     fscanf(pgmFile, "%d", &(pgm->maxValue));
     commentParse(pgmFile);
 
+    if (inputArgs.x2 + inputArgs.width > pgm->width || inputArgs.y2 + inputArgs.height > pgm->height)
+    {
+        fprintf(stderr,
+                "end coordinates outside of scope\n");
+        exit(1);
+    }
     // Allocating memory
     pgm->data = (unsigned char **)malloc(pgm->height * sizeof(unsigned char *));
     // Storing data
