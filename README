@@ -6,3 +6,21 @@ ensure that your tarball works and is not corrupt
 // how it fits into the program as a whole.The README file should not explain any
 // theory that you have used.The README be used by the tutors if they encounter
 // any problems
+
+//explain truncating user in if weird in like -t 4 2 40 40
+//main takes user input, creates instance of frameSequence, which is resposible for processing
+
+Works as explainaed in assignment briefing
+
+./out/extractor ./resources/Examples/larger_image.pgm -t 4 2 40 40 -s 500 500 -w none abcde -w reverse revTest
+
+outputs to ./out/
+
+For some reason is seen as a document and not as an image in vscode and the mac finder, but still opens
+
+-t 0 0 0 100 -s 100 100 -w none VERTICAL
+-t 0 0 100 0 -s 100 100 -w none HORIZONTAL
+
+deal with backwards in only one axis?
+-t 10 10 0 20 -s 100 100 -w none halfback
+-t 10 10 0 20 -s 100 100 -w none halfback

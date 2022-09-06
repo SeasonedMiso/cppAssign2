@@ -12,6 +12,7 @@ typedef struct PGMImage
     unsigned int height;
     unsigned int maxValue;
 } PGMImage;
+
 typedef struct
 {
     string operation;
@@ -50,9 +51,9 @@ public:
     void defaultSequence(PGMImage *pgm, char *outName);
     PGMImage *invertPGM(PGMImage *pgm);
     void reversePGM(PGMImage *pgm, char *outName);
+    vector<unsigned char **> imageSequence;
 
 private:
-    vector<unsigned char **> imageSequence;
     PGMImage *pgm;
     inputArgs inputArgs;
 };

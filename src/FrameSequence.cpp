@@ -22,6 +22,20 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     inputArgs.y1 = tResultArr[1];
     inputArgs.x2 = tResultArr[2];
     inputArgs.y2 = tResultArr[3];
+    bool backwards = false;
+
+    // && inputArgs.y1 > inputArgs.y2
+    if (inputArgs.x1 > inputArgs.x2 && inputArgs.y1 > inputArgs.y2)
+    {
+        backwards = true;
+        int tempX = inputArgs.x2;
+        int tempY = inputArgs.y2;
+        inputArgs.x2 = inputArgs.x1;
+        inputArgs.y2 = inputArgs.y1;
+        inputArgs.x1 = tempX;
+        inputArgs.x1 = tempY;
+    }
+    // cout << inputArgs.x2;
     for (int j = 0; j < wResultVecArray.size(); j++)
     {
         wArgs tempW;
@@ -44,37 +58,68 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
                 if (strcmp(inputArgs.w[j].operation.c_str(), "none") == 0)
                 {
                     string path = "./out/" + inputArgs.w[j].name;
+
+                    if (backwards)
+                    {
+                        reversePGM(pgm, (char *)path.c_str());
+                    }
+                    else
+                    {
                     defaultSequence(pgm, (char *)path.c_str());
-                    cout << "writtenFile" << endl;
+                    }
+                    cout << "written normal frames" << endl;
                 }
                 if (strcmp(inputArgs.w[j].operation.c_str(), "invert") == 0)
                 {
                     string path = "./out/" + inputArgs.w[j].name;
                     PGMImage *invertedPGM = invertPGM(pgm);
-                    defaultSequence(invertedPGM, (char *)path.c_str());
+                    if (backwards)
+                    {
+                        reversePGM(invertedPGM, (char *)path.c_str());
+                    }
+                    else
+                    {
+                        defaultSequence(invertedPGM, (char *)path.c_str());
+                    }
                     closePGM(invertedPGM);
                     cout
-                        << "writtenFile" << endl;
+                        << "written inverted frames" << endl;
                 }
                 if (strcmp(inputArgs.w[j].operation.c_str(), "reverse") == 0)
                 {
                     string path = "./out/" + inputArgs.w[j].name;
+                    if (backwards)
+                    {
+                        defaultSequence(pgm, (char *)path.c_str());
+                    }
+                    else
+                    {
+                        reversePGM(pgm, (char *)path.c_str());
+                    }
                     reversePGM(pgm, (char *)path.c_str());
                     cout
-                        << "writtenFile" << endl;
+                        << "written reverse frames" << endl;
                 }
                 if (strcmp(inputArgs.w[j].operation.c_str(), "revinvert") == 0)
                 {
                     string path = "./out/" + inputArgs.w[j].name;
                     PGMImage *invertedPGM = invertPGM(pgm);
-                    reversePGM(invertedPGM, (char *)path.c_str());
+
+                    if (backwards)
+                    {
+                        defaultSequence(invertedPGM, (char *)path.c_str());
+                    }
+                    else
+                    {
+                        reversePGM(invertedPGM, (char *)path.c_str());
+                    }
                     closePGM(invertedPGM);
                     cout
-                        << "writtenFile" << endl;
+                        << "written revinerted frames" << endl;
                 }
             }
         }
-        writePGM(pgm, "./out/outName.pgm");
+        writePGM(pgm, "./out/testOut.pgm");
         closePGM(pgm);
     }
 }
@@ -86,6 +131,7 @@ FrameSequence::FrameSequence()
     inputArgs.y1 = 0;
     inputArgs.x2 = 0;
     inputArgs.y2 = 0;
+    imageSequence = {};
 }
 FrameSequence::~FrameSequence()
 {
@@ -118,7 +164,6 @@ bool FrameSequence::writePGM(PGMImage *pgm,
     myfile.close();
     return false;
 }
-
 void FrameSequence::commentParse(FILE *filePointer)
 {
     int ch;
@@ -259,6 +304,7 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName)
         }
         string outFrameName = outNameTemp + "-" + fileNo + ".pgm ";
         writePGM(newPgm, outFrameName.c_str());
+        imageSequence.push_back(pgm->data);
         // for some reason first pixel on each line is wrong?
 
         for (int i = 0; i < inputArgs.y2 - inputArgs.y1; i++)
@@ -320,8 +366,7 @@ void FrameSequence::reversePGM(PGMImage *pgm, char *outName)
         }
         string outFrameName = outNameTemp + "-" + fileNo + ".pgm ";
         writePGM(newPgm, outFrameName.c_str());
-        // for some reason first pixel on each line is wrong?
-
+        imageSequence.push_back(pgm->data);
         for (int i = 0; i < inputArgs.y2 - inputArgs.y1; i++)
         {
             free(newPgm->data[i]);
