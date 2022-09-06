@@ -26,6 +26,17 @@
       "externalConsole": true,
       "MIMode": "lldb",
       "preLaunchTask": "debug"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": true,
+      "externalConsole": false,
+      "cwd": "/Users/zakwren/Coding/cpp/Assign2/out",
+      "program": "/Users/zakwren/Coding/cpp/Assign2/out/build/Debug/outDebug",
+      "MIMode": "gdb"
     }
   ]
 }

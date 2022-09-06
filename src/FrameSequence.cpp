@@ -225,7 +225,12 @@ void FrameSequence::defaultSequence(PGMImage *pgm, inputArgs inArgs, char *outNa
             }
         }
         string outNameTemp = (string)outName;
-        string outFrameName = outNameTemp.substr(0, outNameTemp.find_last_of(".")) + to_string(f) + ".pgm";
+
+        stringstream ss;
+        ss << setw(4) << setfill('0') << f;
+        string fileNo = ss.str();
+
+        string outFrameName = outNameTemp.substr(0, outNameTemp.find_last_of(".")) + fileNo + ".pgm";
         writePGM(newPgm, outFrameName.c_str());
         // for some reason first pixel on each line is wrong?
         for (int i = 0; i < inArgs.y2 - inArgs.y1; i++)
