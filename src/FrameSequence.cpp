@@ -20,7 +20,8 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     inputArgs.y1 = tResultArr[1];
     inputArgs.x2 = tResultArr[2];
     inputArgs.y2 = tResultArr[3];
-    bool backwards = false;
+    bool backwardsX = false;
+    bool backwardsY = false;
     bool vertical = false;
     bool horizontal = false;
     int frameMax;
@@ -35,13 +36,22 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     // Deal with special cases
     if (inputArgs.x1 > inputArgs.x2 || inputArgs.y1 > inputArgs.y2)
     {
-        backwards = true;
-        int tempX = inputArgs.x2;
-        int tempY = inputArgs.y2;
-        inputArgs.x2 = inputArgs.x1;
-        inputArgs.y2 = inputArgs.y1;
-        inputArgs.x1 = tempX;
-        inputArgs.y1 = tempY;
+        if (inputArgs.x1 > inputArgs.x2)
+        {
+            cout << "backwardX" << endl;
+            backwardsX = true;
+            int tempX = inputArgs.x2;
+            inputArgs.x2 = inputArgs.x1;
+            inputArgs.x1 = tempX;
+        }
+        if (inputArgs.y1 > inputArgs.y2)
+        {
+            cout << "backwardY" << endl;
+            backwardsY = true;
+            int tempY = inputArgs.y2;
+            inputArgs.y2 = inputArgs.y1;
+            inputArgs.y1 = tempY;
+        }
     }
     if (inputArgs.x1 == inputArgs.x2 && inputArgs.y1 != inputArgs.y2)
     {
@@ -58,16 +68,17 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
         // Deal with if x and y distance arent the same, and truncate longer one
         if (inputArgs.x2 - inputArgs.x1 > inputArgs.y2 - inputArgs.y1)
         {
+            cout << "truncated end coords" << endl;
             inputArgs.x2 -= (inputArgs.x2 - inputArgs.x1) - (inputArgs.y2 - inputArgs.y1);
         }
         if (inputArgs.x2 - inputArgs.x1 < inputArgs.y2 - inputArgs.y1)
         {
+            cout << "truncated end coords" << endl;
             inputArgs.y2 -= (inputArgs.y2 - inputArgs.y1) - (inputArgs.x2 - inputArgs.x1);
         }
         frameMax = inputArgs.x2 - inputArgs.x1;
-        cout << "truncated end coords" << endl;
     }
-    bool specialArgs[3] = {horizontal, vertical, backwards};
+    bool specialArgs[4] = {horizontal, vertical, backwardsX, backwardsY};
     // allocate mem for PGM object
     pgm = (PGMImage *)malloc(sizeof(PGMImage));
     // Get pgm from input, save as object
@@ -90,6 +101,7 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
                     if (inputArgs.w[j].operation == "reverse")
                     {
                         specialArgs[2] = !specialArgs[2];
+                        specialArgs[3] = !specialArgs[3];
                     }
                     defaultSequence(pgm, (char *)path.c_str(), frameMax, specialArgs);
                     cout << "written normal frames" << endl;
@@ -101,6 +113,7 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
                     if (inputArgs.w[j].operation == "reverse")
                     {
                         specialArgs[2] = !specialArgs[2];
+                        specialArgs[3] = !specialArgs[3];
                     }
                     defaultSequence(invertedPGM, (char *)path.c_str(), frameMax, specialArgs);
                     closePGM(invertedPGM);
@@ -113,6 +126,7 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
                     if (inputArgs.w[j].operation == "reverse")
                     {
                         specialArgs[2] = !specialArgs[2];
+                        specialArgs[3] = !specialArgs[3];
                     }
                     defaultSequence(pgm, (char *)path.c_str(), frameMax, specialArgs);
                     cout
@@ -125,6 +139,7 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
                     if (inputArgs.w[j].operation == "reverse")
                     {
                         specialArgs[2] = !specialArgs[2];
+                        specialArgs[3] = !specialArgs[3];
                     }
                     defaultSequence(invertedPGM, (char *)path.c_str(), frameMax, specialArgs);
                     closePGM(invertedPGM);
@@ -298,13 +313,29 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName, int frameMax, 
     int endY;
     int startX;
     int endX;
-    // specialArgs[2] = reverse flag
-    if (specialArgs[2])
+    // specialArgs[2] = backwardsX
+    if (specialArgs[2] || specialArgs[3])
     {
-        startY = inputArgs.y2;
-        endY = inputArgs.y2 + inputArgs.height;
-        startX = inputArgs.x2;
-        endX = inputArgs.x2 + inputArgs.width;
+        if (specialArgs[2])
+        {
+            startX = inputArgs.x2;
+            endX = inputArgs.x2 + inputArgs.width;
+        }
+        else
+        {
+            startX = inputArgs.x1;
+            endX = inputArgs.x1 + inputArgs.width;
+        }
+        if (specialArgs[3])
+        {
+            startY = inputArgs.y2;
+            endY = inputArgs.y2 + inputArgs.height;
+        }
+        else
+        {
+            startY = inputArgs.y1;
+            endY = inputArgs.y1 + inputArgs.height;
+        }
     }
     else
     {
@@ -347,8 +378,8 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName, int frameMax, 
         }
         free(newPgm->data);
         free(newPgm);
-        // move to next frame, while not incrementing in horizontal or vertical edge case
-        if (specialArgs[2])
+        // move to next frame, while not incrementing in horizontal or vertical edge case, and decrementing in that axis is reversed
+        if (specialArgs[2] || specialArgs[3])
         {
             if (specialArgs[0])
             {
@@ -360,12 +391,28 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName, int frameMax, 
                 startY--;
                 endY--;
             }
-            else if (!specialArgs[0] && !specialArgs[1])
+            else
             {
-                startX--;
-                endX--;
-                startY--;
-                endY--;
+                if (specialArgs[2])
+                {
+                    startX--;
+                    endX--;
+                }
+                else
+                {
+                    startX++;
+                    endX++;
+                }
+                if (specialArgs[3])
+                {
+                    startY--;
+                    endY--;
+                }
+                else
+                {
+                    startY++;
+                    endY++;
+                }
             }
         }
         else
