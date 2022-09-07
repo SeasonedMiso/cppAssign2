@@ -38,7 +38,6 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     {
         if (inputArgs.x1 > inputArgs.x2)
         {
-            cout << "backwardX" << endl;
             backwardsX = true;
             int tempX = inputArgs.x2;
             inputArgs.x2 = inputArgs.x1;
@@ -46,7 +45,6 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
         }
         if (inputArgs.y1 > inputArgs.y2)
         {
-            cout << "backwardY" << endl;
             backwardsY = true;
             int tempY = inputArgs.y2;
             inputArgs.y2 = inputArgs.y1;
