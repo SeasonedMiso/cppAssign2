@@ -16,8 +16,18 @@ making an exception for if x1 and x2, or y1 and y2 are the same, in which case i
 
 <!-- reverse is breaking stuff -->
 
+vertical is broken
+
 backwards horizontal and vertical cases
 
 deal with backwards in only one axis?
 -t 10 10 0 20 -s 100 100 -w none halfback
 -t 10 10 0 20 -s 100 100 -w none halfback
+
+vertical:
+
+x normal: returns basic case (x incremented)
+./out/extractor ./resources/Examples/larger_image.pgm -t 0 10 0 0 -s 100 100 -w none cutoff
+
+    x backwards
+    ./out/extractor ./resources/Examples/larger_image.pgm -t 0 10 0 0 -s 100 100 -w none cutoff

@@ -33,7 +33,7 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     }
 
     // Deal with special cases
-    if (inputArgs.x1 > inputArgs.x2 && inputArgs.y1 > inputArgs.y2)
+    if (inputArgs.x1 > inputArgs.x2 || inputArgs.y1 > inputArgs.y2)
     {
         backwards = true;
         int tempX = inputArgs.x2;
@@ -43,7 +43,6 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
         inputArgs.x1 = tempX;
         inputArgs.y1 = tempY;
     }
-    cout << inputArgs.x2 << " " << inputArgs.y2 << " " << inputArgs.x1 << " " << inputArgs.y1 << endl;
     if (inputArgs.x1 == inputArgs.x2 && inputArgs.y1 != inputArgs.y2)
     {
         frameMax = inputArgs.y2 - inputArgs.y1;
@@ -53,7 +52,6 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     {
         frameMax = inputArgs.x2 - inputArgs.x1;
         horizontal = true;
-        cout << "hi";
     }
     else
     {
@@ -67,6 +65,7 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
             inputArgs.y2 -= (inputArgs.y2 - inputArgs.y1) - (inputArgs.x2 - inputArgs.x1);
         }
         frameMax = inputArgs.x2 - inputArgs.x1;
+        cout << "truncated end coords" << endl;
     }
     bool specialArgs[3] = {horizontal, vertical, backwards};
     // allocate mem for PGM object
@@ -356,12 +355,12 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName, int frameMax, 
                 startX--;
                 endX--;
             }
-            if (specialArgs[1])
+            else if (specialArgs[1])
             {
                 startY--;
                 endY--;
             }
-            if (!specialArgs[0] && !specialArgs[0])
+            else if (!specialArgs[0] && !specialArgs[1])
             {
                 startX--;
                 endX--;
@@ -376,12 +375,12 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName, int frameMax, 
                 startX++;
                 endX++;
             }
-            if (specialArgs[1])
+            else if (specialArgs[1])
             {
                 startY++;
                 endY++;
             }
-            if (!specialArgs[0] && !specialArgs[0])
+            else if (!specialArgs[0] && !specialArgs[1])
             {
                 startX++;
                 endX++;
