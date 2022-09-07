@@ -1,33 +1,18 @@
 <!-- ensure that your tarball works and is not corrupt -->
 
-Works as explainaed in assignment briefing
+Works as explained in assignment briefing, Mastery work is not included
 
+example usage:
 ./out/extractor ./resources/Examples/larger_image.pgm -t 4 2 40 40 -s 500 500 -w none abcde -w reverse revTest
 
 outputs to ./out/
 
-For some reason is seen as a document and not as an image in vscode and the mac finder, but still opens
+For some reason is seen as a document and not as an image in vscode and the mac finder, but still opens and looks good.
 
 if the input given has a different length for distance traveled from x1 to x2, when compared to y1 and y2, it will go with the shortest value
-
 making an exception for if x1 and x2, or y1 and y2 are the same, in which case it will do a vertical or horizontal pan
 
-## To implement
-
-<!-- reverse is breaking stuff -->
-
-vertical is broken
-
-backwards horizontal and vertical cases
-
-deal with backwards in only one axis?
+edge cases not implemented: 
+backwards in only one axis: example
 -t 10 10 0 20 -s 100 100 -w none halfback
 -t 10 10 0 20 -s 100 100 -w none halfback
-
-vertical:
-
-x normal: returns basic case (x incremented)
-./out/extractor ./resources/Examples/larger_image.pgm -t 0 10 0 0 -s 100 100 -w none cutoff
-
-    x backwards
-    ./out/extractor ./resources/Examples/larger_image.pgm -t 0 10 0 0 -s 100 100 -w none cutoff
