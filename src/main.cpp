@@ -90,15 +90,6 @@ int main(int argc, char *argv[])
             {
                 badArg();
             }
-            // // deal with if distance between x1&x2 is not the same as y1&y2
-            if (tResultArr[2] - tResultArr[0] > tResultArr[3] - tResultArr[1])
-            {
-                tResultArr[2] -= (tResultArr[2] - tResultArr[0]) - (tResultArr[3] - tResultArr[1]);
-            }
-            if (tResultArr[2] - tResultArr[0] < tResultArr[3] - tResultArr[1])
-            {
-                tResultArr[3] -= (tResultArr[3] - tResultArr[1]) - (tResultArr[2] - tResultArr[0]);
-            }
         }
         if (strcmp(argv[i], "-s") == 0)
         {

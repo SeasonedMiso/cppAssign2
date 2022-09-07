@@ -1,14 +1,4 @@
-WRITE README
-
-ensure that your tarball works and is not corrupt
-
-// provide a README file explaining what each file submitted does and
-// how it fits into the program as a whole.The README file should not explain any
-// theory that you have used.The README be used by the tutors if they encounter
-// any problems
-
-//explain truncating user in if weird in like -t 4 2 40 40
-//main takes user input, creates instance of frameSequence, which is resposible for processing
+<!-- ensure that your tarball works and is not corrupt -->
 
 Works as explainaed in assignment briefing
 
@@ -18,8 +8,15 @@ outputs to ./out/
 
 For some reason is seen as a document and not as an image in vscode and the mac finder, but still opens
 
--t 0 0 0 100 -s 100 100 -w none VERTICAL
--t 0 0 100 0 -s 100 100 -w none HORIZONTAL
+if the input given has a different length for distance traveled from x1 to x2, when compared to y1 and y2, it will go with the shortest value
+
+making an exception for if x1 and x2, or y1 and y2 are the same, in which case it will do a vertical or horizontal pan
+
+## To implement
+
+<!-- reverse is breaking stuff -->
+
+backwards horizontal and vertical cases
 
 deal with backwards in only one axis?
 -t 10 10 0 20 -s 100 100 -w none halfback

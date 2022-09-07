@@ -11,8 +11,6 @@
 #include "FrameSequence.hpp"
 using namespace std;
 
-// deal with 1st pixel of each row
-
 void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<string>> wResultVecArray, char *inFilename)
 {
     inputArgs.filePath = inFilename;
@@ -23,19 +21,9 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
     inputArgs.x2 = tResultArr[2];
     inputArgs.y2 = tResultArr[3];
     bool backwards = false;
-
-    // && inputArgs.y1 > inputArgs.y2
-    if (inputArgs.x1 > inputArgs.x2 && inputArgs.y1 > inputArgs.y2)
-    {
-        backwards = true;
-        int tempX = inputArgs.x2;
-        int tempY = inputArgs.y2;
-        inputArgs.x2 = inputArgs.x1;
-        inputArgs.y2 = inputArgs.y1;
-        inputArgs.x1 = tempX;
-        inputArgs.x1 = tempY;
-    }
-    // cout << inputArgs.x2;
+    bool vertical = false;
+    bool horizontal = false;
+    int frameMax;
     for (int j = 0; j < wResultVecArray.size(); j++)
     {
         wArgs tempW;
@@ -44,43 +32,78 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
         inputArgs.w[j].name = wResultVecArray[j][1];
     }
 
+    // Deal with special cases
+    if (inputArgs.x1 > inputArgs.x2 && inputArgs.y1 > inputArgs.y2)
+    {
+        backwards = true;
+        int tempX = inputArgs.x2;
+        int tempY = inputArgs.y2;
+        inputArgs.x2 = inputArgs.x1;
+        inputArgs.y2 = inputArgs.y1;
+        inputArgs.x1 = tempX;
+        inputArgs.y1 = tempY;
+    }
+    cout << inputArgs.x2 << " " << inputArgs.y2 << " " << inputArgs.x1 << " " << inputArgs.y1 << endl;
+    if (inputArgs.x1 == inputArgs.x2 && inputArgs.y1 != inputArgs.y2)
+    {
+        frameMax = inputArgs.y2 - inputArgs.y1;
+        vertical = true;
+    }
+    else if (inputArgs.y1 == inputArgs.y2 && inputArgs.x1 != inputArgs.x2)
+    {
+        frameMax = inputArgs.x2 - inputArgs.x1;
+        horizontal = true;
+        cout << "hi";
+    }
+    else
+    {
+        // Deal with if x and y distance arent the same, and truncate longer one
+        if (inputArgs.x2 - inputArgs.x1 > inputArgs.y2 - inputArgs.y1)
+        {
+            inputArgs.x2 -= (inputArgs.x2 - inputArgs.x1) - (inputArgs.y2 - inputArgs.y1);
+        }
+        if (inputArgs.x2 - inputArgs.x1 < inputArgs.y2 - inputArgs.y1)
+        {
+            inputArgs.y2 -= (inputArgs.y2 - inputArgs.y1) - (inputArgs.x2 - inputArgs.x1);
+        }
+        frameMax = inputArgs.x2 - inputArgs.x1;
+    }
+    bool specialArgs[3] = {horizontal, vertical, backwards};
+    // allocate mem for PGM object
     pgm = (PGMImage *)malloc(sizeof(PGMImage));
+    // Get pgm from input, save as object
     if (openPGM(pgm, inputArgs.filePath))
     {
+        // default case
         if (inputArgs.w.size() == 0)
         {
-            defaultSequence(pgm, (char *)"./out/default.pgm");
+            defaultSequence(pgm, (char *)"./out/default.pgm", frameMax, specialArgs);
         }
         else
         {
+            // do for each w flag
             for (int j = 0; j < inputArgs.w.size(); j++)
             {
                 if (strcmp(inputArgs.w[j].operation.c_str(), "none") == 0)
                 {
                     string path = "./out/" + inputArgs.w[j].name;
-
-                    if (backwards)
+                    // in the event of a backwards case (x2<x1 etc), you can treat it as a reverse case
+                    if (inputArgs.w[j].operation == "reverse")
                     {
-                        reversePGM(pgm, (char *)path.c_str());
+                        specialArgs[2] = !specialArgs[2];
                     }
-                    else
-                    {
-                    defaultSequence(pgm, (char *)path.c_str());
-                    }
+                    defaultSequence(pgm, (char *)path.c_str(), frameMax, specialArgs);
                     cout << "written normal frames" << endl;
                 }
                 if (strcmp(inputArgs.w[j].operation.c_str(), "invert") == 0)
                 {
                     string path = "./out/" + inputArgs.w[j].name;
                     PGMImage *invertedPGM = invertPGM(pgm);
-                    if (backwards)
+                    if (inputArgs.w[j].operation == "reverse")
                     {
-                        reversePGM(invertedPGM, (char *)path.c_str());
+                        specialArgs[2] = !specialArgs[2];
                     }
-                    else
-                    {
-                        defaultSequence(invertedPGM, (char *)path.c_str());
-                    }
+                    defaultSequence(invertedPGM, (char *)path.c_str(), frameMax, specialArgs);
                     closePGM(invertedPGM);
                     cout
                         << "written inverted frames" << endl;
@@ -88,15 +111,11 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
                 if (strcmp(inputArgs.w[j].operation.c_str(), "reverse") == 0)
                 {
                     string path = "./out/" + inputArgs.w[j].name;
-                    if (backwards)
+                    if (inputArgs.w[j].operation == "reverse")
                     {
-                        defaultSequence(pgm, (char *)path.c_str());
+                        specialArgs[2] = !specialArgs[2];
                     }
-                    else
-                    {
-                        reversePGM(pgm, (char *)path.c_str());
-                    }
-                    reversePGM(pgm, (char *)path.c_str());
+                    defaultSequence(pgm, (char *)path.c_str(), frameMax, specialArgs);
                     cout
                         << "written reverse frames" << endl;
                 }
@@ -104,22 +123,16 @@ void FrameSequence::makeFrames(int *tResultArr, int *sResultArr, vector<vector<s
                 {
                     string path = "./out/" + inputArgs.w[j].name;
                     PGMImage *invertedPGM = invertPGM(pgm);
-
-                    if (backwards)
+                    if (inputArgs.w[j].operation == "reverse")
                     {
-                        defaultSequence(invertedPGM, (char *)path.c_str());
+                        specialArgs[2] = !specialArgs[2];
                     }
-                    else
-                    {
-                        reversePGM(invertedPGM, (char *)path.c_str());
-                    }
+                    defaultSequence(invertedPGM, (char *)path.c_str(), frameMax, specialArgs);
                     closePGM(invertedPGM);
-                    cout
-                        << "written revinerted frames" << endl;
+                    cout << "written revinerted frames" << endl;
                 }
             }
         }
-        writePGM(pgm, "./out/testOut.pgm");
         closePGM(pgm);
     }
 }
@@ -142,20 +155,22 @@ void FrameSequence::closePGM(PGMImage *pgm)
     // deallocate image;
     for (int i = 0; i < pgm->height; i++)
     {
-        free(pgm->data[i]);
+        delete (pgm->data[i]);
     }
-    free(pgm->data);
+    delete (pgm->data);
     return;
 }
 bool FrameSequence::writePGM(PGMImage *pgm,
                              const char *filename)
 {
+    // write header
     ofstream myfile(filename, ios::binary);
     myfile.write("P5\n", 3);
     myfile.write(to_string(pgm->width).c_str(), to_string(pgm->width).length());
     myfile.write(" ", 1);
     myfile.write(to_string(pgm->height).c_str(), to_string(pgm->height).length());
     myfile.write("\n255\n\n", 6);
+    // write contents
     for (int i = 0;
          i < pgm->height; i++)
     {
@@ -168,9 +183,11 @@ void FrameSequence::commentParse(FILE *filePointer)
 {
     int ch;
     char line[100];
-    // Ignore any blank lines
+    // Ignore any blank lines or comments
     while ((ch = fgetc(filePointer)) != EOF && isspace(ch))
+    {
         ;
+    }
     if (ch == '#')
     {
         fgets(line, sizeof(line), filePointer);
@@ -179,8 +196,7 @@ void FrameSequence::commentParse(FILE *filePointer)
     else
         fseek(filePointer, -1, SEEK_CUR);
 }
-// Function to open the input a PGM
-// file and process it
+
 bool FrameSequence::openPGM(PGMImage *pgm,
                             const char *filename)
 {
@@ -192,6 +208,7 @@ bool FrameSequence::openPGM(PGMImage *pgm,
         return false;
     }
     commentParse(pgmFile);
+
     // Parse header
     fscanf(pgmFile, "%s",
            pgm->pgmType);
@@ -209,9 +226,10 @@ bool FrameSequence::openPGM(PGMImage *pgm,
                 "end coordinates outside of scope\n");
         exit(1);
     }
-    // Allocating memory
+
+    // Allocate memory
     pgm->data = (unsigned char **)malloc(pgm->height * sizeof(unsigned char *));
-    // Storing data
+    // Store data
     if (pgm->pgmType[1] == '5')
     {
         fgetc(pgmFile);
@@ -233,10 +251,11 @@ bool FrameSequence::openPGM(PGMImage *pgm,
     fclose(pgmFile);
     return true;
 }
-// Function to print the file details
+
 void FrameSequence::printImageDetails(PGMImage *pgm,
                                       const char *filename)
 {
+    // used for testing
     FILE *pgmfile = fopen(filename, "rb");
 
     // Retrieving the file extension
@@ -274,18 +293,35 @@ void FrameSequence::printImageDetails(PGMImage *pgm,
     // close file
     fclose(pgmfile);
 }
-void FrameSequence::defaultSequence(PGMImage *pgm, char *outName)
+void FrameSequence::defaultSequence(PGMImage *pgm, char *outName, int frameMax, bool *specialArgs)
 {
-    int startY = inputArgs.y1;
-    int endY = inputArgs.y1 + inputArgs.height;
-    int startX = inputArgs.x1;
-    int endX = inputArgs.x1 + inputArgs.width;
-    for (int f = 0; f < inputArgs.x2 - inputArgs.x1; f++)
+    int startY;
+    int endY;
+    int startX;
+    int endX;
+    // specialArgs[2] = reverse flag
+    if (specialArgs[2])
+    {
+        startY = inputArgs.y2;
+        endY = inputArgs.y2 + inputArgs.height;
+        startX = inputArgs.x2;
+        endX = inputArgs.x2 + inputArgs.width;
+    }
+    else
+    {
+        startY = inputArgs.y1;
+        endY = inputArgs.y1 + inputArgs.height;
+        startX = inputArgs.x1;
+        endX = inputArgs.x1 + inputArgs.width;
+    }
+    // do for each frame
+    for (int f = 0; f < frameMax; f++)
     {
         PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
         newPgm->height = inputArgs.height;
         newPgm->width = inputArgs.width;
         newPgm->data = (unsigned char **)malloc(newPgm->height * sizeof(unsigned char *));
+        // copy pixel values from old image into temporary one
         for (int y = startY; y < endY; y++)
         {
             newPgm->data[y - startY] = (unsigned char *)malloc(newPgm->width + 1 * sizeof(unsigned char));
@@ -305,23 +341,59 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName)
         string outFrameName = outNameTemp + "-" + fileNo + ".pgm ";
         writePGM(newPgm, outFrameName.c_str());
         imageSequence.push_back(pgm->data);
-        // for some reason first pixel on each line is wrong?
-
+        // deallocate temp image
         for (int i = 0; i < inputArgs.y2 - inputArgs.y1; i++)
         {
             free(newPgm->data[i]);
         }
         free(newPgm->data);
         free(newPgm);
-        startX++;
-        startY++;
-        endX++;
-        endY++;
+        // move to next frame, while not incrementing in horizontal or vertical edge case
+        if (specialArgs[2])
+        {
+            if (specialArgs[0])
+            {
+                startX--;
+                endX--;
+            }
+            if (specialArgs[1])
+            {
+                startY--;
+                endY--;
+            }
+            if (!specialArgs[0] && !specialArgs[0])
+            {
+                startX--;
+                endX--;
+                startY--;
+                endY--;
+            }
+        }
+        else
+        {
+            if (specialArgs[0])
+            {
+                startX++;
+                endX++;
+            }
+            if (specialArgs[1])
+            {
+                startY++;
+                endY++;
+            }
+            if (!specialArgs[0] && !specialArgs[0])
+            {
+                startX++;
+                endX++;
+                startY++;
+                endY++;
+            }
+        }
     }
 }
-
 PGMImage *FrameSequence::invertPGM(PGMImage *pgm)
 {
+    // iterates through a pgm, and returns a new pgm with inverted values
     PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
     newPgm->height = pgm->height;
     newPgm->width = pgm->width;
@@ -335,47 +407,4 @@ PGMImage *FrameSequence::invertPGM(PGMImage *pgm)
         }
     }
     return newPgm;
-}
-void FrameSequence::reversePGM(PGMImage *pgm, char *outName)
-{
-    int startY = inputArgs.y2;
-    int endY = inputArgs.y2 + inputArgs.height;
-    int startX = inputArgs.x2;
-    int endX = inputArgs.x2 + inputArgs.width;
-    for (int f = 0; f < inputArgs.x2 - inputArgs.x1; f++)
-    {
-        PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
-        newPgm->height = inputArgs.height;
-        newPgm->width = inputArgs.width;
-        newPgm->data = (unsigned char **)malloc(newPgm->height * sizeof(unsigned char *));
-        for (int y = startY; y < endY; y++)
-        {
-            newPgm->data[y - startY] = (unsigned char *)malloc(newPgm->width + 1 * sizeof(unsigned char));
-            for (int x = startX; x < endX; x++)
-            {
-                newPgm->data[y - startY][x - startX] = pgm->data[y][x];
-            }
-        }
-        string outNameTemp = (string)outName;
-        stringstream ss;
-        ss << setw(4) << setfill('0') << f;
-        string fileNo = ss.str();
-        if (outNameTemp.find('.') == std::string::npos)
-        {
-            outNameTemp = outNameTemp.substr(0, outNameTemp.find_last_of("."));
-        }
-        string outFrameName = outNameTemp + "-" + fileNo + ".pgm ";
-        writePGM(newPgm, outFrameName.c_str());
-        imageSequence.push_back(pgm->data);
-        for (int i = 0; i < inputArgs.y2 - inputArgs.y1; i++)
-        {
-            free(newPgm->data[i]);
-        }
-        free(newPgm->data);
-        free(newPgm);
-        startX--;
-        startY--;
-        endX--;
-        endY--;
-    }
 }

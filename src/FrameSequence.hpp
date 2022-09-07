@@ -48,9 +48,9 @@ public:
     bool writePGM(PGMImage *pgm,
                   const char *filename);
     void closePGM(PGMImage *pgm);
-    void defaultSequence(PGMImage *pgm, char *outName);
+    void defaultSequence(PGMImage *pgm, char *outName, int frameMax, bool *specialArgs);
     PGMImage *invertPGM(PGMImage *pgm);
-    void reversePGM(PGMImage *pgm, char *outName);
+    void reversePGM(PGMImage *pgm, char *outName, bool *specialArgs);
     vector<unsigned char **> imageSequence;
 
 private:
