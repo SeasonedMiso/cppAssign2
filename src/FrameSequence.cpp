@@ -179,9 +179,9 @@ bool FrameSequence::writePGM(PGMImage *pgm,
     ofstream myfile(filename, ios::binary);
     myfile.write("P5\n", 3);
     myfile.write(to_string(pgm->width).c_str(), to_string(pgm->width).length());
-    myfile.write(" ", 1);
+    myfile.put(' ');
     myfile.write(to_string(pgm->height).c_str(), to_string(pgm->height).length());
-    myfile.write("\n255\n\n", 6);
+    myfile.write("\n255\n", 5);
     // write contents
     for (int i = 0;
          i < pgm->height; i++)
@@ -366,7 +366,7 @@ void FrameSequence::defaultSequence(PGMImage *pgm, char *outName, int frameMax, 
         {
             outNameTemp = outNameTemp.substr(0, outNameTemp.find_last_of("."));
         }
-        string outFrameName = outNameTemp + "-" + fileNo + ".pgm ";
+        string outFrameName = outNameTemp + "-" + fileNo + ".pgm";
         writePGM(newPgm, outFrameName.c_str());
         imageSequence.push_back(pgm->data);
         // deallocate temp image

@@ -7,7 +7,5 @@ example usage:
 
 outputs to ./out/
 
-For some reason is seen as a document and not as an image in vscode and the mac finder, but still opens and looks good.
-
 if the input given has a different length for distance traveled from x1 to x2, when compared to y1 and y2, it will go with the shortest value
 making an exception for if x1 and x2, or y1 and y2 are the same, in which case it will do a vertical or horizontal pan
